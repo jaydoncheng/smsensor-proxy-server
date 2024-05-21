@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template
 from flask_sock import Sock
 from dataclasses import dataclass, field
 import typing
@@ -14,22 +14,6 @@ app.config['SOCK_SERVER_OPTIONS'] = {
 }
 
 sock = Sock(app)
-
-
-"""
-pc client is the receiver
-mobile client is the sender
-
-pc client sends a request to /new to create a new room
-server responds with a room id
-pc client sends a request to /join/<id> to join the room
-pc client joins websocket room with room id
-mobile client sends a request to /join/<id> to join the room
-mobile client joins websocket room with room id
-mobile client sends a message to the websocket room
-pc client receives the message
-"""
-
 @dataclass
 class Client:
     ws: any

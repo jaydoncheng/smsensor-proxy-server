@@ -1,10 +1,11 @@
 from contextlib import closing
 from websocket import create_connection
 
+ip = '104.248.92.31'
 i = 0
-with closing(create_connection('ws://0.0.0.0:5000/')) as ws:
+with closing(create_connection(f'ws://{ip}/')) as ws:
     room_id = ws.recv()
-    print('http://0.0.0.0:5000/room/' + str(room_id))
+    print(f'http://{ip}/room/' + str(room_id))
 
     while True:
         try:
