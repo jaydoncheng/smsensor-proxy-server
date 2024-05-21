@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Join</title>
+</head>
+
+<body>
+    <h3>Join - {{ id }}</h3>
+    <script type="text/javascript">
+        let socket = new WebSocket('ws://localhost:5000/room/{{ id }}');
+        socket.onmessage = (event) => {
+            if (event.data === 'close') {
+                socket.close();
+            }
+            console.log(event.data);
+        };
+
+        socket.onopen = () => {
+            setInterval(() => {
+                data = {
+                    'id': '{{ id }}',
+                    'name': 'John Doe',
+                    'message': 'Hello World'
+                }
+                socket.send(JSON.stringify(data));
+            }, 1000);
+        };
+    </script>
+</body>
