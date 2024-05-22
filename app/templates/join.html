@@ -15,16 +15,32 @@
             }
             console.log(event.data);
         };
+        let socket_open = false;
+
+        let accelerometer = null;
+        try {
+            accelerometer = new Accelerometer({ frequency: 60, referenceFrame: 'device' });
+            accelerometer.addEventListener('error', event => {
+                if (event.error.name === 'NotAllowedError') {
+                    console.log('Permission to access sensor was denied.');
+                } else if (event.error.name === 'NotReadableError') {
+                    console.log('Cannot connect to the sensor.');
+                }
+            });
+            accelerometer.addEventListener('reading', () => {
+                socket.send(JSON.stringify({
+                    x: accelerometer.x,
+                    y: accelerometer.y,
+                    z: accelerometer.z
+                }));
+            });
+            accelerometer.start();
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
 
         socket.onopen = () => {
-            setInterval(() => {
-                data = {
-                    'id': '{{ id }}',
-                    'name': 'John Doe',
-                    'message': 'Hello World'
-                }
-                socket.send(JSON.stringify(data));
-            }, 1000);
+            socket_open = true;
         };
     </script>
 </body>
