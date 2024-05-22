@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import typing
 from datetime import datetime
 import uuid
+from time import sleep
 
 import simple_websocket
 
@@ -47,6 +48,7 @@ def new(ws):
     room = create_room()
     room.consumers.append(Client(ws))
 
+    sleep(2)
     ws.send(str(room.id))
     while True:
         try:

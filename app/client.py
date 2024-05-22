@@ -1,11 +1,10 @@
 from contextlib import closing
 from websocket import create_connection
 
-ip = '104.248.92.31'
-i = 0
-with closing(create_connection(f'ws://{ip}/')) as ws:
+ip = 'smsensors.jaydoncheng.me'
+with closing(create_connection(f'wss://{ip}:8000/')) as ws:
     room_id = ws.recv()
-    print(f'http://{ip}/room/' + str(room_id))
+    print(f'https://{ip}/room/' + str(room_id))
 
     while True:
         try:
