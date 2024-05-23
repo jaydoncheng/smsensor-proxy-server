@@ -16,12 +16,10 @@
         socket.onopen = () => {
             socket_open = true;
             const connect_data = {
-                data: {
-                    id: '{{ id }}',
-                    accelerometer: accelerometer !== null
-                }
+                id: '{{ id }}',
             };
-            socket.send('join');
+            socket.send(JSON.stringify(connect_data));
+            document.getElementById('debug').innerText = 'Connected';
         };
 
         function getAccel() {
@@ -54,5 +52,6 @@
 
 <body>
     <h3>Join - {{ id }}</h3>
+    <span id="debug"></span>
     <button id="accelPermsButton" onclick="getAccel()">Give Permission</button>
 </body>
