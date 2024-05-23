@@ -31,6 +31,7 @@
                             window.addEventListener('devicemotion', (event) => {
                                 if (socket_open) {
                                     socket.send(JSON.stringify({
+                                        type: event.type,
                                         timestamp: event.timeStamp,
                                         x: event.acceleration.x,
                                         y: event.acceleration.y,
@@ -44,6 +45,7 @@
                             window.addEventListener('deviceorientation', (event) => {
                                 if (socket_open) {
                                     socket.send(JSON.stringify({
+                                        type: event.type,
                                         timestamp: event.timeStamp,
                                         alpha: event.alpha,
                                         beta: event.beta,
