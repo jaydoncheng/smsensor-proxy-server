@@ -8,7 +8,7 @@
 <body>
     <h3>Join - {{ id }}</h3>
     <script type="text/javascript">
-        let socket = new WebSocket('ws://' + location.host + '/room/{{ id }}');
+        let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
         socket.onmessage = (event) => {
             if (event.data === 'close') {
                 socket.close();
