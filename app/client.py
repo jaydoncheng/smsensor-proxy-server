@@ -1,11 +1,15 @@
 from contextlib import closing
 from websocket import create_connection
+import qrcodeT
 
 ip = 'smsensors.jaydoncheng.me'
 with closing(create_connection(f'wss://{ip}/')) as ws:
     print('Connected to server')
     room_id = ws.recv()
-    print(f'https://{ip}/room/' + str(room_id))
+    url = f'https://{ip}/room/' + str(room_id)
+    print('Scan the QR code to join the room')
+    qrcodeT.qrcodeT(url)
+    print(url)
 
     while True:
         try:
