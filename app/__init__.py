@@ -52,7 +52,7 @@ def new(ws):
     sleep(2)
     data = {
         'type': 'newroom',
-        'id': room.id
+        'id': str(room.id)
     }
     ws.send(json.dumps(data))
     while True:
