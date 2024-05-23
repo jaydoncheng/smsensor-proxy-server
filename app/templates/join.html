@@ -2,15 +2,20 @@
 <html>
 
 <head>
-    <title>Join</title>
+    <title>Sensor Reading</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
         let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
+        if (socket.readyState === WebSocket.CLOSED) {
+            document.getElementById('debug').innerText = 'Connection failed';
+        }
+
         socket.onmessage = (event) => {
             if (event.data === 'close') {
                 socket.close();
             }
-            console.log(event.data);
         };
+
         let socket_open = false;
 
         socket.onopen = () => {
@@ -55,18 +60,54 @@
                             });
                         } else {
                             console.log('Permission denied');
+                            document.getElementById('debug').innerText = 'Permission denied';
                         }
                     })
                     .catch(console.error);
             } else {
                 console.log('DeviceMotionEvent.requestPermission not supported');
+                document.getElementById('debug').innerText = 'This device does not support Motion Events.';
             }
         }
     </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-size: 1.5em;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4em;
+            height: 100vh;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0ff;
+
+            padding: 0.4em;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+        }
+
+        button {
+            padding: 0.4em 0.6em;
+            font-size: 1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 0.6em;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <h3>Join - {{ id }}</h3>
-    <span id="debug"></span>
-    <button id="accelPermsButton" onclick="getAccel()">Give Permission</button>
+    <p>The browser needs permission to read your phone's sensors.</p>
+    <span id="debug" style="color: #ff5a5a">Connecting...</span>
+    <button id="accelPermsButton" onclick="getAccel()">Tap here to give permission</button>
+    <span style="font-size: 0.6em; color: gray;">Room: {{ id }}</span>
 </body>
