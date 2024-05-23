@@ -3,11 +3,7 @@
 
 <head>
     <title>Join</title>
-</head>
-
-<body>
-    <h3>Join - {{ id }}</h3>
-    <script type="text/javascript">
+    <script>
         let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
         socket.onmessage = (event) => {
             if (event.data === 'close') {
@@ -17,30 +13,46 @@
         };
         let socket_open = false;
 
-        let accelerometer = null;
-        try {
-            accelerometer = new Accelerometer({ frequency: 60, referenceFrame: 'device' });
-            accelerometer.addEventListener('error', event => {
-                if (event.error.name === 'NotAllowedError') {
-                    console.log('Permission to access sensor was denied.');
-                } else if (event.error.name === 'NotReadableError') {
-                    console.log('Cannot connect to the sensor.');
-                }
-            });
-            accelerometer.addEventListener('reading', () => {
-                socket.send(JSON.stringify({
-                    x: accelerometer.x,
-                    y: accelerometer.y,
-                    z: accelerometer.z
-                }));
-            });
-            accelerometer.start();
-        } catch (error) {
-            console.log('Error: ' + error);
-        }
-
         socket.onopen = () => {
             socket_open = true;
+            const connect_data = {
+                data: {
+                    id: '{{ id }}',
+                    accelerometer: accelerometer !== null
+                }
+            };
+            socket.send('join');
         };
+
+        function getAccel() {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            console.log('Permission granted');
+                            window.addEventListener('devicemotion', (event) => {
+                                if (socket_open) {
+                                    socket.send(JSON.stringify(event));
+                                }
+                            });
+                            window.addEventListener('deviceorientation', (event) => {
+                                if (socket_open) {
+                                    socket.send(JSON.stringify(event));
+                                }
+                            });
+                        } else {
+                            console.log('Permission denied');
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                console.log('DeviceMotionEvent.requestPermission not supported');
+            }
+        }
     </script>
+</head>
+
+<body>
+    <h3>Join - {{ id }}</h3>
+    <button id="accelPermsButton" onclick="getAccel()">Give Permission</button>
 </body>
