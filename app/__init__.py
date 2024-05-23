@@ -5,6 +5,7 @@ import typing
 from datetime import datetime
 import uuid
 from time import sleep
+import json
 
 import simple_websocket
 
@@ -49,7 +50,11 @@ def new(ws):
     room.consumers.append(Client(ws))
 
     sleep(2)
-    ws.send(str(room.id))
+    data = {
+        'type': 'newroom',
+        'id': room.id
+    }
+    ws.send(json.dumps(data))
     while True:
         try:
             data = ws.receive()

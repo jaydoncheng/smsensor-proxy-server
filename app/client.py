@@ -13,7 +13,6 @@ with closing(create_connection(f'wss://{ip}/')) as ws:
     qrcodeT.qrcodeT(url)
     print(url)
 
-
     accel_table = PrettyTable()
     orient_table = PrettyTable()
 
