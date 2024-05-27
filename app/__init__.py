@@ -22,14 +22,19 @@ class Client:
 
 @dataclass
 class Room:
+    ip: str
     id: uuid.UUID
     last_active: float
     consumers: typing.List[Client] = field(default_factory=list)
     producers: typing.List[Client] = field(default_factory=list)
 
 rooms : typing.Dict[str, Room] = {}
-def create_room():
-    room = Room(id=uuid.uuid4(), last_active=datetime.now().timestamp())
+def create_room(ip):
+    for room in rooms.values():
+        if room.ip == ip:
+            return room
+
+    room = Room(ip=ip, id=uuid.uuid4(), last_active=datetime.now().timestamp())
     rooms[str(room.id)] = room
     return room
 
@@ -46,12 +51,13 @@ def new(ws):
         if datetime.now().timestamp() - room.last_active > 60*30:
             del rooms[str(room.id)]
 
-    room = create_room()
+    ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+
+    room = create_room(ip)
     room.consumers.append(Client(ws))
 
     sleep(2)
     data = {
-        'ip': request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr),
         'type': 'newroom',
         'id': str(room.id)
     }
