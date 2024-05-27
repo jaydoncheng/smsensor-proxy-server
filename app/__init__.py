@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sock import Sock
 from dataclasses import dataclass, field
 import typing
@@ -51,6 +51,7 @@ def new(ws):
 
     sleep(2)
     data = {
+        'ip': request.remote_addr,
         'type': 'newroom',
         'id': str(room.id)
     }
