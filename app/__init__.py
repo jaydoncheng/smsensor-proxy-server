@@ -29,12 +29,15 @@ class Room:
     producers: typing.List[Client] = field(default_factory=list)
 
 rooms : typing.Dict[str, Room] = {}
-def create_room(ip):
+def create_room(ip, ws):
+    print(rooms)
+    print(ip)
     for room in rooms.values():
-        if room.ip == ip:
-            return room
+        print(room)
 
     room = Room(ip=ip, id=uuid.uuid4(), last_active=datetime.now().timestamp())
+
+    room.consumers.append(Client(ws))
     rooms[str(room.id)] = room
     return room
 
@@ -53,10 +56,8 @@ def new(ws):
 
     ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
 
-    room = create_room(ip)
-    room.consumers.append(Client(ws))
+    room = create_room(ip, ws)
 
-    sleep(2)
     data = {
         'type': 'newroom',
         'id': str(room.id)
@@ -83,6 +84,7 @@ def room(ws, id):
     if id not in rooms:
         ws.send('close')
         return
+    
     room = rooms[id]
     room.producers.append(Client(ws))
     while True:
