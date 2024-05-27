@@ -51,7 +51,7 @@ def new(ws):
 
     sleep(2)
     data = {
-        'ip': request.remote_addr,
+        'ip': request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr),
         'type': 'newroom',
         'id': str(room.id)
     }
