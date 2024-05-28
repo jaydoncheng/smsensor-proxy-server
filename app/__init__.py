@@ -30,13 +30,6 @@ class Room:
 
 rooms : typing.Dict[str, Room] = {}
 def create_room(ip, ws):
-    print(rooms, ip)
-    for room in rooms.values():
-        print(room.ip)
-        if room.ip == ip:
-            print('Room already exists')
-            return room
-
     room = Room(ip=ip, id=uuid.uuid4(), last_active=datetime.now().timestamp())
 
     room.consumers.append(Client(ws))
@@ -52,13 +45,6 @@ def close_room(room):
 
 @sock.route('/')
 def new(ws):
-    for room in rooms.values():
-        print('Checking rooms')
-        print(datetime.now().timestamp())
-        print(room.last_active)
-        if datetime.now().timestamp() - room.last_active > 60*30:
-            del rooms[str(room.id)]
-
     ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
 
     room = create_room(ip, ws)
