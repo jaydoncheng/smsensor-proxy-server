@@ -28,7 +28,6 @@ with closing(create_connection(f'wss://{ip}/')) as ws:
                 break
 
             # clear the screen
-
             data = ast.literal_eval(str(data))
 
             # display event data in table format with timestamp

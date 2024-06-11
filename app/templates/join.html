@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
         let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
+        let time = new Date().now().toString();
+        let client_id = ''+Math.floor(Math.random() * 1000000);
+        client_id = time + client_id;
         if (socket.readyState === WebSocket.CLOSED) {
             document.getElementById('debug').innerText = 'Connection failed';
         }
@@ -22,6 +25,7 @@
             socket_open = true;
             const connect_data = {
                 id: '{{ id }}',
+                client_id: client_id,
             };
             socket.send(JSON.stringify(connect_data));
             document.getElementById('debug').innerText = 'Connected';
