@@ -31,7 +31,7 @@
             document.getElementById('debug').innerText = 'Connected';
         };
 
-        function getAccel() {
+        function startSensors() {
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
                 DeviceMotionEvent.requestPermission()
                     .then(permissionState => {
@@ -114,6 +114,6 @@
 <body>
     <p>The browser needs permission to read your phone's sensors.</p>
     <span id="debug" style="color: #ff5a5a">Connecting...</span>
-    <button id="accelPermsButton" onclick="getAccel()">Tap here to give permission</button>
+    <button id="accelPermsButton" onclick="startSensors()">Tap here to give permission</button>
     <span style="font-size: 0.6em; color: gray;">Room: {{ id }}</span>
 </body>
