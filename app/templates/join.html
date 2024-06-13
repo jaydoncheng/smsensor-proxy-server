@@ -8,31 +8,33 @@
         function debug(msg) {
             document.getElementById('debug').innerText += '\n' + msg;
         }
-        
-        let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
-        let time = Date.now().toString();
-        let client_id = ''+Math.floor(Math.random() * 1000000);
-        client_id = time + client_id;
-        debug('Client ID: ' + client_id);
 
-        socket.onmessage = (event) => {
-            if (event.data === 'close') {
-                socket.close();
-            }
-            debug(event.data);
-        };
+        window.addEventListener('load', function () {
+            let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
+            let time = Date.now().toString();
+            let client_id = '' + Math.floor(Math.random() * 1000000);
+            client_id = time + client_id;
+            debug('Client ID: ' + client_id);
 
-        let socket_open = false;
-
-        socket.onopen = () => {
-            socket_open = true;
-            const connect_data = {
-                id: '{{ id }}',
-                client_id: client_id,
+            socket.onmessage = (event) => {
+                if (event.data === 'close') {
+                    socket.close();
+                }
+                debug(event.data);
             };
-            socket.send(JSON.stringify(connect_data));
-            debug('Connected to server');
-        };
+
+            let socket_open = false;
+
+            socket.onopen = () => {
+                socket_open = true;
+                const connect_data = {
+                    id: '{{ id }}',
+                    client_id: client_id,
+                };
+                socket.send(JSON.stringify(connect_data));
+                debug('Connected to server');
+            };
+        })
 
         function startSensors() {
             if (typeof DeviceMotionEvent.requestPermission === 'function') {

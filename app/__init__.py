@@ -85,7 +85,6 @@ def room(ws, id):
                 room.producers.remove(Client(ws))
                 break
             for client in room.consumers:
-                print(client)
                 client.ws.send(data)
         except simple_websocket.ConnectionClosed:
             room.producers.remove(Client(ws))
