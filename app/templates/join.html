@@ -9,21 +9,19 @@
             document.getElementById('debug').innerText += '\n' + msg;
         }
 
+        let socket_open = false;
+        let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
+        let time = Date.now().toString();
+        let client_id = '' + Math.floor(Math.random() * 1000000);
+        client_id = time + client_id;
         window.addEventListener('load', function () {
-            let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
-            let time = Date.now().toString();
-            let client_id = '' + Math.floor(Math.random() * 1000000);
-            client_id = time + client_id;
             debug('Client ID: ' + client_id);
-
             socket.onmessage = (event) => {
                 if (event.data === 'close') {
                     socket.close();
                 }
                 debug(event.data);
             };
-
-            let socket_open = false;
 
             socket.onopen = () => {
                 socket_open = true;
