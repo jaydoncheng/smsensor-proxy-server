@@ -15,13 +15,6 @@
         client_id = time + client_id;
         debug('Client ID: ' + client_id);
 
-        let check = setInterval(() => {
-            if (socket.readyState === WebSocket.CLOSED) {
-                debug('Socket closed');
-                clearInterval(check);
-            }
-        }, 1000);
-
         socket.onmessage = (event) => {
             if (event.data === 'close') {
                 socket.close();
