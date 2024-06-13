@@ -5,18 +5,28 @@
     <title>Sensor Reading</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
+        function debug(msg) {
+            document.getElementById('debug').innerText += '\n' + msg;
+        }
+        
         let socket = new WebSocket('wss://' + location.host + '/room/{{ id }}');
         let time = Date.now().toString();
         let client_id = ''+Math.floor(Math.random() * 1000000);
         client_id = time + client_id;
-        if (socket.readyState === WebSocket.CLOSED) {
-            document.getElementById('debug').innerText = 'Connection failed';
-        }
+        debug('Client ID: ' + client_id);
+
+        let check = setInterval(() => {
+            if (socket.readyState === WebSocket.CLOSED) {
+                debug('Socket closed');
+                clearInterval(check);
+            }
+        }, 1000);
 
         socket.onmessage = (event) => {
             if (event.data === 'close') {
                 socket.close();
             }
+            debug(event.data);
         };
 
         let socket_open = false;
@@ -36,7 +46,7 @@
                 DeviceMotionEvent.requestPermission()
                     .then(permissionState => {
                         if (permissionState === 'granted') {
-                            console.log('Permission granted');
+                            debug('Permission granted');
                             window.addEventListener('devicemotion', (event) => {
                                 if (socket_open) {
                                     socket.send(JSON.stringify({
@@ -65,14 +75,12 @@
                                 }
                             });
                         } else {
-                            console.log('Permission denied');
-                            document.getElementById('debug').innerText = 'Permission denied';
+                            debug('Permission denied');
                         }
                     })
                     .catch(console.error);
             } else {
-                console.log('DeviceMotionEvent.requestPermission not supported');
-                document.getElementById('debug').innerText = 'This device does not support Motion Events.';
+                debug('This device does not support Motion Events.');
             }
         }
     </script>
@@ -113,7 +121,7 @@
 
 <body>
     <p>The browser needs permission to read your phone's sensors.</p>
-    <span id="debug" style="color: #ff5a5a">Connecting...</span>
     <button id="accelPermsButton" onclick="startSensors()">Tap here to give permission</button>
     <span style="font-size: 0.6em; color: gray;">Room: {{ id }}</span>
+    <div id="debug" style="color: gray; font-size: 0.6em">Connecting...</div>
 </body>
