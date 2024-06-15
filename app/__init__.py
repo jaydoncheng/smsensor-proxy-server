@@ -79,7 +79,7 @@ def join(id):
 @sock.route('/room/<id>')
 def room(ws, id):
     print('New connection to room', id)
-    print('id: ', hex(id(rooms)))
+    print(f'id: {hex(id(rooms))}')
     if id not in rooms:
         ws.send('close')
         return
