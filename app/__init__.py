@@ -8,8 +8,8 @@ import json
 
 import simple_websocket
 # import multiprocessing as mp
-# from gevent import monkey
-# monkey.patch_all()
+from gevent import monkey
+monkey.patch_all()
 
 app = Flask(__name__)
 app.config['SECRET'] = 'secret'
