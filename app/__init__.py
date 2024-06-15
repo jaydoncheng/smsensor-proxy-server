@@ -4,10 +4,12 @@ from dataclasses import dataclass, field
 import typing
 from datetime import datetime
 import uuid
-from time import sleep
 import json
 
 import simple_websocket
+# import multiprocessing as mp
+# from gevent import monkey
+# monkey.patch_all()
 
 app = Flask(__name__)
 app.config['SECRET'] = 'secret'
@@ -28,7 +30,7 @@ class Room:
     consumers: typing.List[Client] = field(default_factory=list)
     producers: typing.List[Client] = field(default_factory=list)
 
-rooms : typing.Dict[str, Room] = {}
+rooms = {}
 def create_room(ip, ws):
     room = Room(ip=ip, id=uuid.uuid4(), last_active=datetime.now().timestamp())
 
@@ -42,6 +44,10 @@ def close_room(room):
     for client in room.producers:
         client.ws.send('close')
     del rooms[str(room.id)]
+
+
+
+
 
 @sock.route('/')
 def new(ws):
@@ -72,6 +78,8 @@ def join(id):
 
 @sock.route('/room/<id>')
 def room(ws, id):
+    print('New connection to room', id)
+    print('id: ', hex(id(rooms)))
     if id not in rooms:
         ws.send('close')
         return
